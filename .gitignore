@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+dist/
+.env
+.pytest_cache/
+.npm-cache*/
+node_modules_corrupt_*/

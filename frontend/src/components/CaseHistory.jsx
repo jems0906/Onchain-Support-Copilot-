@@ -1,0 +1,5 @@
+import { ArrowUpRight } from 'lucide-react';
+
+export default function CaseHistory({ cases }) {
+  return <section className="recent" id="case-history"><div className="recent-header"><div><span className="kicker">QUEUE</span><h2>Recent cases</h2></div><button className="text-btn">View all <ArrowUpRight size={14}/></button></div><div className="case-list">{cases.slice(0, 3).map((item) => <div className="case-row" key={item.id}><span className="case-code">#{item.id.slice(0, 6)}</span><b>{item.triage?.category?.replaceAll('-', ' ') || 'general'}</b><span className="case-error">{item.error_message}</span><span className="case-network">{item.network === 'base' ? 'Mainnet' : 'Sepolia'}</span><span className="case-status">Triaged</span></div>)}{!cases.length && <div className="empty-row">No cases yet. Your next diagnosis will be logged here.</div>}</div></section>;
+}

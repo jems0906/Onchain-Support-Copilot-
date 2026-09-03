@@ -1,0 +1,6 @@
+import { Activity, ArrowUpRight, Check, Cpu } from 'lucide-react';
+
+export default function TriageResults({ triage, onSave }) {
+  const category = triage?.category?.replaceAll('-', ' ') || 'Awaiting intake';
+  return <div className="panel triage-panel"><div className="panel-heading"><div><span className="kicker">02 / RULE-BASED TRIAGE</span><h2>Diagnosis</h2></div>{triage && <span className="confidence">{Math.round(triage.confidence * 100)}% match</span>}</div>{triage ? <><div className="diagnosis"><div className="signal-icon"><Activity size={20}/></div><div><span className="muted">Suggested category</span><h3>{category}</h3></div></div><div className="findings">{triage.findings.map((item) => <div className="finding" key={item.code}><span className={`severity ${item.severity}`}/><div><b>{item.title}</b><p>{item.detail}</p></div></div>)}</div><div className="next-steps"><b>Recommended next steps</b>{triage.next_steps.map((step) => <div key={step}><Check size={14}/>{step}</div>)}</div><button className="text-btn" onClick={onSave}>Save to case history <ArrowUpRight size={14}/></button></> : <div className="empty-state"><Cpu size={26}/><p>Your diagnosis will appear here.</p><small>Rules run before any AI suggestion.</small></div>}</div>;
+}

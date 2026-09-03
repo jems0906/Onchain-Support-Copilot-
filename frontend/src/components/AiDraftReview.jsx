@@ -1,0 +1,5 @@
+import { Check, Sparkles, Terminal, X } from 'lucide-react';
+
+export default function AiDraftReview({ draft, currentCase, onReview }) {
+  return <div className="panel draft-panel"><div className="panel-heading"><div><span className="kicker">03 / HUMAN REVIEW</span><h2>Response draft</h2></div>{draft && <span className="pending">{currentCase?.review_status || 'Pending approval'}</span>}</div>{draft ? <><p className="draft-copy">{draft.draft}</p><div className="citation"><Sparkles size={14}/><span>Grounded in <b>{draft.citation}</b> · {draft.provider}</span></div><div className="review-actions"><button className="approve" onClick={() => onReview('accepted')}><Check size={15}/> Approve</button><button className="edit" onClick={() => onReview('edited')}><Terminal size={15}/> Mark edited</button><button className="reject" onClick={() => onReview('rejected')}><X size={15}/> Reject</button></div></> : <div className="draft-empty"><Sparkles size={18}/><span>Run a diagnosis to generate a playbook-grounded draft.</span></div>}</div>;
+}

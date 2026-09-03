@@ -1,0 +1,1 @@
+[{"pattern":"execution reverted","category":"transaction-reverted"},{"pattern":"RPC timeout","category":"rpc-error"},{"pattern":"insufficient funds","category":"gas-estimation"},{"pattern":"pending bridge deposit","category":"bridge-delay"},{"pattern":"wrong network","category":"wallet-connection"}]

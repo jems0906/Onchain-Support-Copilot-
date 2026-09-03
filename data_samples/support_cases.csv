@@ -1,0 +1,4 @@
+network,tool_used,error_message,issue_category
+base,Foundry,execution reverted: Ownable: caller is not the owner,transaction-reverted
+base-sepolia,RPC endpoint,request timed out,rpc-error
+base,Bridge,deposit pending after source confirmation,bridge-delay
