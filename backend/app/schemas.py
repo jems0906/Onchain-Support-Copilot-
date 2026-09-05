@@ -61,4 +61,4 @@ class DraftRequest(BaseModel):
 class ReviewRequest(BaseModel):
     case_id: str
     status: Literal["accepted", "edited", "rejected"]
-    response: str | None = None
+    response: str | None = Field(default=None, max_length=12000)

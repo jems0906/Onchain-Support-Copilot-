@@ -31,6 +31,16 @@ class SupportCase(Base):
     response = mapped_column(Text, nullable=True)
 
 
+class ReviewEvent(Base):
+    __tablename__ = "support_case_reviews"
+
+    id = mapped_column(String(36), primary_key=True)
+    case_id = mapped_column(String(36), nullable=False, index=True)
+    created_at = mapped_column(DateTime(timezone=True), nullable=False)
+    status = mapped_column(String(32), nullable=False)
+    response = mapped_column(Text, nullable=True)
+
+
 def get_session() -> Generator[Session, None, None]:
     if not SessionLocal:
         raise RuntimeError("DATABASE_URL is not configured")
