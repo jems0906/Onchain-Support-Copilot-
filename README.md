@@ -40,7 +40,39 @@ The frontend is at `http://localhost:5173`; the API is at `http://localhost:8000
 
 ## Environment
 
-`DATABASE_URL` is optional locally and should be set to Railway PostgreSQL in production. `VITE_API_URL` points the frontend at the backend API. An external AI provider can be added behind the draft route without changing the human approval contract.
+The application expects configuration to come from environment variables at runtime. Do not commit secrets to source control or Docker files. Use a platform secret store or a local `.env` file that is excluded from Git.
+
+### Example environment file
+
+Create a copy of `.env.example` and fill in real values before deploying:
+
+```bash
+cp .env.example .env
+```
+
+Example values:
+
+```env
+ENVIRONMENT=production
+DATABASE_URL=postgresql+psycopg://user:password@host:5432/support
+AI_PROVIDER=openai
+OPENAI_API_KEY=replace-with-real-key
+OPENAI_MODEL=gpt-4o-mini
+API_TOKEN=replace-with-long-random-token
+AUTH_REQUIRED=true
+RATE_LIMIT_PER_MINUTE=120
+RATE_LIMIT_WINDOW_SECONDS=60
+CORS_ALLOWED_ORIGINS=https://app.example.com,https://admin.example.com
+VITE_API_URL=https://api.example.com/api
+```
+
+### Production secret handling
+
+- Store `DATABASE_URL`, `OPENAI_API_KEY`, and `API_TOKEN` in the deployment platform's secret manager or environment settings.
+- Do not place these values in `README.md`, Dockerfiles, or committed config files.
+- Set `AUTH_REQUIRED=true` only in environments that are exposed beyond local development.
+- Keep `CORS_ALLOWED_ORIGINS` explicit in production instead of using `*`.
+- Use `ENVIRONMENT=production` so runtime behavior is aligned with the deployed environment.
 
 ### Production providers
 
