@@ -25,7 +25,7 @@ def get_case(case_id: str):
 
 @router.post("/{case_id}/review")
 def update_review(case_id: str, payload: ReviewRequest):
-    case = review_case(case_id, payload.status, payload.response)
+    case = review_case(case_id, payload.status, payload.response, payload.source)
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
     return case

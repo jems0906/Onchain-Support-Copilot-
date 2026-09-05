@@ -32,13 +32,15 @@ class SupportCase(Base):
 
 
 class ReviewEvent(Base):
-    __tablename__ = "support_case_reviews"
+    __tablename__ = "support_case_review_events_v2"
 
     id = mapped_column(String(36), primary_key=True)
     case_id = mapped_column(String(36), nullable=False, index=True)
     created_at = mapped_column(DateTime(timezone=True), nullable=False)
     status = mapped_column(String(32), nullable=False)
     response = mapped_column(Text, nullable=True)
+    source = mapped_column(String(32), nullable=False, default="custom")
+    review_duration_seconds = mapped_column(Integer, nullable=True)
 
 
 def get_session() -> Generator[Session, None, None]:

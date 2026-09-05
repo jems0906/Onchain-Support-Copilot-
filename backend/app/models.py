@@ -24,7 +24,7 @@ def create_case(payload: dict) -> dict:
     return case
 
 
-def review_case(case_id: str, status: str, response: str | None = None) -> dict | None:
+def review_case(case_id: str, status: str, response: str | None = None, source: str = "custom") -> dict | None:
     if DATABASE_URL:
         with next(get_session()) as session:
             case = session.get(SupportCase, case_id)
@@ -33,7 +33,9 @@ def review_case(case_id: str, status: str, response: str | None = None) -> dict 
             case.review_status = status
             if response is not None:
                 case.response = response
-            event = ReviewEvent(id=str(uuid4()), case_id=case_id, created_at=datetime.now(timezone.utc), status=status, response=response)
+            reviewed_at = datetime.now(timezone.utc)
+            duration = int((reviewed_at - case.created_at).total_seconds())
+            event = ReviewEvent(id=str(uuid4()), case_id=case_id, created_at=reviewed_at, status=status, response=response, source=source, review_duration_seconds=duration)
             session.add(event)
             session.commit()
             session.refresh(case)
@@ -46,7 +48,9 @@ def review_case(case_id: str, status: str, response: str | None = None) -> dict 
     case["review_status"] = status
     if response is not None:
         case["response"] = response
-    case.setdefault("review_history", []).append({"id": str(uuid4()), "created_at": datetime.now(timezone.utc).isoformat(), "status": status, "response": response})
+    reviewed_at = datetime.now(timezone.utc)
+    duration = int((reviewed_at - datetime.fromisoformat(case["created_at"])).total_seconds())
+    case.setdefault("review_history", []).append({"id": str(uuid4()), "created_at": reviewed_at.isoformat(), "status": status, "response": response, "source": source, "review_duration_seconds": duration})
     return case
 
 
@@ -66,7 +70,7 @@ def find_case(case_id: str) -> dict | None:
 
 
 def _review_history(session, case_id: str) -> list[dict]:
-    return [{"id": event.id, "created_at": event.created_at.isoformat(), "status": event.status, "response": event.response} for event in session.query(ReviewEvent).filter_by(case_id=case_id).order_by(ReviewEvent.created_at.asc()).all()]
+    return [{"id": event.id, "created_at": event.created_at.isoformat(), "status": event.status, "response": event.response, "source": event.source, "review_duration_seconds": event.review_duration_seconds} for event in session.query(ReviewEvent).filter_by(case_id=case_id).order_by(ReviewEvent.created_at.asc()).all()]
 
 
 def _case_with_history(session, case: SupportCase) -> dict:
