@@ -1,1 +1,1 @@
-{"$schema":"https://railway.com/railway.schema.json","services":[{"name":"backend","build":{"builder":"DOCKERFILE","dockerfilePath":"backend/Dockerfile","dockerContext":"backend"},"deploy":{"startCommand":""}},{"name":"frontend","build":{"builder":"DOCKERFILE","dockerfilePath":"frontend/Dockerfile","dockerContext":"frontend"}}]}
+{"$schema":"https://railway.com/railway.schema.json","services":[{"name":"onchain-support-copilot","build":{"builder":"DOCKERFILE","dockerfilePath":"Dockerfile","dockerContext":"."},"deploy":{"startCommand":""}}]}

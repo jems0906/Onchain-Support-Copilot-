@@ -29,6 +29,8 @@ docker compose up --build
 
 The frontend is at `http://localhost:5173`; the API is at `http://localhost:8000/docs`.
 
+The Railway deployment uses one container: the root `Dockerfile` builds the React frontend and serves it from FastAPI alongside the `/api` routes.
+
 ## Implemented workflows
 
 - Base Mainnet and Base Sepolia intake with optional wallet, transaction, and contract identifiers.

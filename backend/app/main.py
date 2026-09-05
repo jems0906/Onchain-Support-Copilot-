@@ -6,6 +6,7 @@ from collections import defaultdict, deque
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import APP_NAME, APP_VERSION, ENVIRONMENT, RATE_LIMIT_PER_MINUTE, RATE_LIMIT_WINDOW_SECONDS, API_TOKEN, AUTH_REQUIRED, get_allowed_origins
 from app.database import init_db
@@ -101,3 +102,9 @@ app.include_router(rpc_lookup.router, prefix="/api")
 app.include_router(ai_draft.router, prefix="/api")
 app.include_router(knowledge_base.router, prefix="/api")
 app.include_router(dashboards.router, prefix="/api")
+
+frontend_dist = "/app/frontend-dist"
+try:
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="frontend")
+except RuntimeError:
+    logger.info("Frontend assets are not present; running API-only mode.")
