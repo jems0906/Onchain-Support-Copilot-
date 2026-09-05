@@ -76,4 +76,16 @@ VITE_API_URL=https://api.example.com/api
 
 ### Production providers
 
-When `DATABASE_URL` is set, cases, triage results, and review outcomes are stored in PostgreSQL. The schema is initialized at backend startup. Set `AI_PROVIDER=openai`, `OPENAI_API_KEY`, and optionally `OPENAI_MODEL` to enable real draft generation; failed provider calls fall back to the approved-playbook draft.
+When `DATABASE_URL` is set, cases, triage results, and review outcomes are stored in PostgreSQL. Apply the schema with Alembic before starting the production API:
+
+```powershell
+Set-Location backend
+$env:DATABASE_URL = "postgresql+psycopg://..."
+alembic upgrade head
+```
+
+Set `AI_PROVIDER=openai` with `OPENAI_API_KEY`, or `AI_PROVIDER=anthropic` with `ANTHROPIC_API_KEY`; failed provider calls fall back to the approved-playbook draft. `VITE_REVIEWER_ID` identifies the reviewing operator, and production requests must also provide `X-Reviewer-ID` when authentication is enabled.
+
+### Railway PostgreSQL
+
+Create a PostgreSQL service in the Railway project, then reference its connection string from the backend service as `DATABASE_URL`. Set `ENVIRONMENT=production`, `AUTH_REQUIRED=true`, `API_TOKEN`, the selected AI provider credentials, and the frontend `VITE_API_URL` in Railway variables. Run `alembic upgrade head` as a release or pre-deploy command before serving traffic.

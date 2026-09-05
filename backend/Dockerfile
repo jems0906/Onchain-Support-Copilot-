@@ -3,6 +3,8 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
+COPY alembic.ini ./alembic.ini
+COPY alembic ./alembic
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 EXPOSE 8000

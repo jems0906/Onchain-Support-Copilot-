@@ -41,6 +41,8 @@ class ReviewEvent(Base):
     response = mapped_column(Text, nullable=True)
     source = mapped_column(String(32), nullable=False, default="custom")
     review_duration_seconds = mapped_column(Integer, nullable=True)
+    reviewer_id = mapped_column(String(128), nullable=False, default="local-reviewer")
+    time_saved_minutes = mapped_column(Integer, nullable=False, default=0)
 
 
 def get_session() -> Generator[Session, None, None]:

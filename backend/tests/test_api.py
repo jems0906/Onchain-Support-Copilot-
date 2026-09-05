@@ -95,6 +95,13 @@ def test_protected_routes_require_api_token_when_enabled():
             'error_message': 'RPC timeout while connecting',
             'tool_used': 'RPC endpoint',
         }, headers={'Authorization': 'Bearer super-secret-token'})
+        assert response.status_code == 401
+
+        response = client.post('/api/triage', json={
+            'network': 'base',
+            'error_message': 'RPC timeout while connecting',
+            'tool_used': 'RPC endpoint',
+        }, headers={'Authorization': 'Bearer super-secret-token', 'X-Reviewer-ID': 'test-reviewer'})
         assert response.status_code == 200
     finally:
         app.state.auth_required = original_required
@@ -166,9 +173,13 @@ def test_case_review_records_edit_and_history():
         'case_id': case_id,
         'status': 'edited',
         'response': 'Use the Base network and reconnect the wallet.',
-    })
+        'reviewer_id': 'test-reviewer',
+        'time_saved_minutes': 12,
+    }, headers={'X-Reviewer-ID': 'test-reviewer'})
     assert reviewed.status_code == 200
     payload = reviewed.json()
     assert payload['review_status'] == 'edited'
     assert payload['response'].startswith('Use the Base network')
     assert payload['review_history'][-1]['status'] == 'edited'
+    assert payload['review_history'][-1]['reviewer_id'] == 'test-reviewer'
+    assert payload['review_history'][-1]['time_saved_minutes'] == 12

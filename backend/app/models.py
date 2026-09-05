@@ -24,7 +24,7 @@ def create_case(payload: dict) -> dict:
     return case
 
 
-def review_case(case_id: str, status: str, response: str | None = None, source: str = "custom") -> dict | None:
+def review_case(case_id: str, status: str, response: str | None = None, source: str = "custom", reviewer_id: str = "local-reviewer", time_saved_minutes: float = 0) -> dict | None:
     if DATABASE_URL:
         with next(get_session()) as session:
             case = session.get(SupportCase, case_id)
@@ -35,7 +35,7 @@ def review_case(case_id: str, status: str, response: str | None = None, source: 
                 case.response = response
             reviewed_at = datetime.now(timezone.utc)
             duration = int((reviewed_at - case.created_at).total_seconds())
-            event = ReviewEvent(id=str(uuid4()), case_id=case_id, created_at=reviewed_at, status=status, response=response, source=source, review_duration_seconds=duration)
+            event = ReviewEvent(id=str(uuid4()), case_id=case_id, created_at=reviewed_at, status=status, response=response, source=source, review_duration_seconds=duration, reviewer_id=reviewer_id, time_saved_minutes=round(time_saved_minutes))
             session.add(event)
             session.commit()
             session.refresh(case)
@@ -50,7 +50,7 @@ def review_case(case_id: str, status: str, response: str | None = None, source: 
         case["response"] = response
     reviewed_at = datetime.now(timezone.utc)
     duration = int((reviewed_at - datetime.fromisoformat(case["created_at"])).total_seconds())
-    case.setdefault("review_history", []).append({"id": str(uuid4()), "created_at": reviewed_at.isoformat(), "status": status, "response": response, "source": source, "review_duration_seconds": duration})
+    case.setdefault("review_history", []).append({"id": str(uuid4()), "created_at": reviewed_at.isoformat(), "status": status, "response": response, "source": source, "review_duration_seconds": duration, "reviewer_id": reviewer_id, "time_saved_minutes": time_saved_minutes})
     return case
 
 
@@ -70,7 +70,7 @@ def find_case(case_id: str) -> dict | None:
 
 
 def _review_history(session, case_id: str) -> list[dict]:
-    return [{"id": event.id, "created_at": event.created_at.isoformat(), "status": event.status, "response": event.response, "source": event.source, "review_duration_seconds": event.review_duration_seconds} for event in session.query(ReviewEvent).filter_by(case_id=case_id).order_by(ReviewEvent.created_at.asc()).all()]
+    return [{"id": event.id, "created_at": event.created_at.isoformat(), "status": event.status, "response": event.response, "source": event.source, "review_duration_seconds": event.review_duration_seconds, "reviewer_id": event.reviewer_id, "time_saved_minutes": event.time_saved_minutes} for event in session.query(ReviewEvent).filter_by(case_id=case_id).order_by(ReviewEvent.created_at.asc()).all()]
 
 
 def _case_with_history(session, case: SupportCase) -> dict:

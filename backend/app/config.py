@@ -41,6 +41,9 @@ def validate_environment() -> None:
     if os.getenv("AI_PROVIDER", "mock").strip().lower() == "openai" and not os.getenv("OPENAI_API_KEY", "").strip():
         raise RuntimeError("Production configuration error: OPENAI_API_KEY is required when AI_PROVIDER=openai.")
 
+    if os.getenv("AI_PROVIDER", "mock").strip().lower() == "anthropic" and not os.getenv("ANTHROPIC_API_KEY", "").strip():
+        raise RuntimeError("Production configuration error: ANTHROPIC_API_KEY is required when AI_PROVIDER=anthropic.")
+
 
 NETWORKS = {
     "base": {"name": "Base Mainnet", "chain_id": 8453, "rpc_url": "https://mainnet.base.org", "explorer": "https://basescan.org"},
@@ -54,6 +57,8 @@ DATABASE_URL = os.getenv("DATABASE_URL", "")
 AI_PROVIDER = os.getenv("AI_PROVIDER", "mock").lower()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-3-5-haiku-latest")
 RATE_LIMIT_PER_MINUTE = get_int_env("RATE_LIMIT_PER_MINUTE", 120)
 RATE_LIMIT_WINDOW_SECONDS = get_int_env("RATE_LIMIT_WINDOW_SECONDS", 60)
 API_TOKEN = os.getenv("API_TOKEN", "")

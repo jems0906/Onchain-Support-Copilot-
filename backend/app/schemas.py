@@ -63,3 +63,5 @@ class ReviewRequest(BaseModel):
     status: Literal["accepted", "edited", "rejected"]
     response: str | None = Field(default=None, max_length=12000)
     source: Literal["playbook", "custom"] = "custom"
+    reviewer_id: str = Field(min_length=2, max_length=128)
+    time_saved_minutes: float = Field(default=0, ge=0, le=480)

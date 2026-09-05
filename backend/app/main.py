@@ -47,8 +47,13 @@ async def require_api_token(request: Request, call_next):
     if app.state.auth_required and request.url.path.startswith("/api"):
         authorization = request.headers.get("authorization", "")
         expected = f"Bearer {app.state.api_token}".strip()
-        if not app.state.api_token or authorization != expected:
+        reviewer_id = request.headers.get("x-reviewer-id", "").strip()
+        if not app.state.api_token or authorization != expected or not reviewer_id:
             return JSONResponse(status_code=401, content={"detail": "Authentication required."})
+
+        request.state.reviewer_id = reviewer_id
+    else:
+        request.state.reviewer_id = request.headers.get("x-reviewer-id", "local-reviewer").strip() or "local-reviewer"
 
     return await call_next(request)
 
